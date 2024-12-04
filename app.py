@@ -61,7 +61,7 @@ if st.button("Анализировать текст"):
                 moderation_classes = output.get("moderation_classes", {})
                 flagged_classes = [
                     cls for cls, score in moderation_classes.items()
-                    if isinstance(score, (int, float)) and score > 0.3
+                    if isinstance(score, (int, float)) and score > 0.1
                 ]
                 
                 if flagged_classes:
