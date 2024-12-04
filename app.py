@@ -33,14 +33,14 @@ if not st.session_state['logged_in']:
             st.experimental_set_query_params(logged_in="true")  # Сохранение состояния
         else:
             st.error("Неверный логин или пароль.")
-    st.stop()
+    st.stop()  # Останавливаем выполнение, пока не произошел вход
 
 # Логика после успешного входа
 st.sidebar.title("Панель управления")
 if st.sidebar.button("Выйти"):
-    st.session_state['logged_in'] = False
+    st.session_state.clear()  # Очистка сессии
     st.experimental_set_query_params()  # Очистка параметров
-    st.experimental_rerun()
+    st.stop()  # Остановка выполнения скрипта после выхода
 
 st.title("AI Фильтр текста")
 st.subheader("Анализируйте текст с помощью искуственного интеллекта. | By MkSeven1.")
