@@ -28,16 +28,17 @@ def login(username, password):
 
 # Функция для чтения cookies
 def get_cookie(key):
-    # Используем st.query_params вместо устаревшего st.experimental_get_query_params
-    cookie_value = st.query_params.get(key, [None])[0]
-    return cookie_value
-
+    # Используем только st.query_params
+    current_params = st.query_params
+    return current_params.get(key, [None])[0]
 
 # Функция для записи cookies через query_params
 def set_cookie(key, value):
-    current_params = st.experimental_get_query_params()  # Читаем текущие параметры
-    current_params[key] = value
-    st.experimental_set_query_params(**current_params)  # Обновляем параметры
+    # Получаем текущие параметры и обновляем их
+    current_params = st.query_params
+    updated_params = {**current_params, key: value}
+    st.set_query_params(**updated_params)
+
 
 # Проверка забанен ли игрок
 def check_ban(username):
