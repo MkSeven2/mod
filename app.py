@@ -5,10 +5,10 @@ import pytz
 
 # Данные забаненных пользователей
 banned_users = {
-    "MkSeven2": {
-        "reason": "Cheating",
+    "Banned": {
+        "reason": "Test Reason",
         "unban_date": "15-12-24 10:00",
-        "moderator_note": "Detected using unauthorized tools.",
+        "moderator_note": "Test Mod note..",
     },
 }
 
@@ -16,6 +16,7 @@ banned_users = {
 users = {
     "MkSeven1": "9872",
     "penisbobra3": "izudoner667",
+    "Banned": "1",
 }
 
 # Функция для проверки логина
