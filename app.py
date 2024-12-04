@@ -1,6 +1,6 @@
 import streamlit as st
-import openai
 import json
+import requests
 
 # Функция для сериализации вывода
 def serialize(obj):
@@ -21,18 +21,16 @@ def serialize(obj):
     else:
         return repr(obj)  # Преобразует неизвестные типы в строку
 
-# Доступ к ключу API OpenAI из Streamlit secrets
-api_key = st.secrets.get("openai_secret")
-if not api_key:
-    st.error("Ключ API не найден в Streamlit secrets. Добавьте его для продолжения.")
+# Доступ к пользовательским данным API из Streamlit secrets
+api_user = "43464075"
+api_secret = "vJ2XKNu732mFPqGrEvRzX5SgyLoGdPqr"
+if not api_user or not api_secret:
+    st.error("Данные пользователя API не найдены в Streamlit secrets. Добавьте их для продолжения.")
     st.stop()
-
-# Инициализация клиента OpenAI
-client = openai.Client(api_key=api_key)
 
 # Компоненты интерфейса Streamlit
 st.title("Обнаружение языка ненависти")
-st.subheader("Анализируйте текст с помощью API модерации OpenAI.")
+st.subheader("Анализируйте текст с помощью API Sightengine.")
 user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь...")
 
 # Кнопка для запуска анализа
@@ -41,20 +39,30 @@ if st.button("Анализировать текст"):
         st.warning("Введите текст для анализа.")
     else:
         try:
-            # Вызов метода модерации
-            response = client.moderations.create(
-            model="omni-moderation-2024-09-26",
-            input=user_input,
-            )
-            print(response)
-            # Извлечение и сериализация ответа
-            output = response['results'][0]
-            serialized_output = serialize(output)
-            json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
+            # Подготовка данных для запроса
+            data = {
+                'text': user_input,
+                'mode': 'ml',
+                'lang': 'en',  # Измените на нужный язык, если требуется
+                'models': 'general,self-harm',
+                'api_user': api_user,
+                'api_secret': api_secret
+            }
             
-            # Отображение результатов
-            st.subheader("Результаты анализа")
-            st.json(json_output)
+            # Отправка запроса в API Sightengine
+            response = requests.post('https://api.sightengine.com/1.0/text/check.json', data=data)
+            
+            # Проверка ответа
+            if response.status_code == 200:
+                output = response.json()
+                serialized_output = serialize(output)
+                json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
+
+                # Отображение результатов
+                st.subheader("Результаты анализа")
+                st.json(json_output)
+            else:
+                st.error(f"Ошибка API: {response.status_code} - {response.text}")
 
         except Exception as e:
             st.error(f"Произошла ошибка при обработке запроса: {str(e)}")
