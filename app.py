@@ -58,7 +58,7 @@ if st.button("Анализировать текст"):
                 serialized_output = serialize(output)
                 
                 # Логика обработки результатов
-                if output.get("probabilities", {}).get("self-harm", 0) > 0.5 or \
+                if output.get("probabilities", {}).get("toxic", 0) > 0.25 or \
                    output.get("probabilities", {}).get("general", 0) > 0.5:
                     st.warning("Текст отфильтрован. В тексте обнаружено что-то нежелательное.")
                 else:
