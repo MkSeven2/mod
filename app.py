@@ -21,7 +21,7 @@ def serialize(obj):
     else:
         return repr(obj)  # Преобразует неизвестные типы в строку
 
-# Доступ к пользовательским данным API из Streamlit secrets
+# Доступ к пользовательским данным API
 api_user = "43464075"
 api_secret = "vJ2XKNu732mFPqGrEvRzX5SgyLoGdPqr"
 if not api_user or not api_secret:
@@ -44,7 +44,7 @@ if st.button("Анализировать текст"):
                 'text': user_input,
                 'mode': 'ml',
                 'lang': 'en',  # Измените на нужный язык, если требуется
-                'models': 'general,self-harm',
+                'models': 'general,self-harm, toxic',
                 'api_user': api_user,
                 'api_secret': api_secret
             }
@@ -57,10 +57,16 @@ if st.button("Анализировать текст"):
                 output = response.json()
                 serialized_output = serialize(output)
                 
-                # Логика обработки результатов
-                if output.get("probabilities", {}).get("toxic", 0) > 0.25 or \
-                   output.get("probabilities", {}).get("general", 0) > 0.5:
-                    st.warning("Текст отфильтрован. В тексте обнаружено что-то нежелательное.")
+                # Анализ классов модерации
+                moderation_classes = output.get("moderation_classes", {})
+                flagged_classes = [
+                    cls for cls, score in moderation_classes.items()
+                    if isinstance(score, (int, float)) and score > 0.3
+                ]
+                
+                if flagged_classes:
+                    flagged_text = ", ".join(flagged_classes)
+                    st.warning(f"Текст отфильтрован. Обнаружены следующие категории: {flagged_text}.")
                 else:
                     st.success("Все в порядке. Текст не содержит проблемного контента.")
                 
