@@ -5,10 +5,10 @@ import pytz
 
 # Данные забаненных пользователей
 banned_users = {
-    "Banned": {
-        "reason": "Test Reason",
-        "unban_date": "20-12-29 10:00",
-        "moderator_note": "Just testing moderator note",
+    "MkSeven2": {
+        "reason": "Cheating",
+        "unban_date": "15-12-24 10:00",
+        "moderator_note": "Detected using unauthorized tools.",
     },
 }
 
@@ -16,7 +16,6 @@ banned_users = {
 users = {
     "MkSeven1": "9872",
     "penisbobra3": "izudoner667",
-    "Banned": "1",
 }
 
 # Функция для проверки логина
@@ -45,11 +44,7 @@ def get_cookie(key):
 
 # Проверка состояния авторизации
 if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = False  # По умолчанию - не залогинен
-    stored_login = get_cookie("logged_in") == "true"
-    if stored_login:
-        st.session_state['username'] = get_cookie("username")
-        st.session_state['logged_in'] = stored_login and st.session_state['username'] in users
+    st.session_state['logged_in'] = get_cookie("logged_in") == "true"
 
 # Авторизация
 if not st.session_state['logged_in']:
@@ -61,18 +56,12 @@ if not st.session_state['logged_in']:
         if login(username, password):
             ban_info = check_ban(username)
             if ban_info:
-                # Если пользователь забанен, перенаправляем на страницу с параметром not-approved
-                st.experimental_set_query_params(
-                    not_approved=True, reason=ban_info['reason'], unban_date=ban_info['unban_date']
-                )
-                st.stop()  # Останавливаем дальнейшее выполнение, чтобы обновить страницу с новыми параметрами
+                st.error(f"Вы забанены до {ban_info['unban_date']}. Причина: {ban_info['reason']}.")
             else:
                 st.session_state['logged_in'] = True
-                st.session_state['username'] = username
                 set_cookie("logged_in", "true")
-                set_cookie("username", username)
                 st.success("Вы успешно вошли в систему!")
-                st.rerun()  # Перезагрузка сессии
+                st.experimental_set_query_params()  # Перезагрузка сессии
         else:
             st.error("Неверный логин или пароль.")
     st.stop()
@@ -82,9 +71,8 @@ st.sidebar.title("Панель управления")
 if st.sidebar.button("Выйти"):
     st.session_state['logged_in'] = False
     set_cookie("logged_in", "false")
-    set_cookie("username", "")
     st.experimental_set_query_params()  # Сброс параметров
-    st.rerun()  # Перезагрузка сессии
+    st.stop()
 
 # Основной контент
 st.title("AI Фильтр текста")
