@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 import json
-
+openai_secret = "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"
 # Function to serialize the output
 def serialize(obj):
     """Recursively walk object's hierarchy."""
