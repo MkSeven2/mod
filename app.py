@@ -2,7 +2,7 @@ import streamlit as st #line:1
 import requests #line:2
 from datetime import datetime #line:3
 import pytz #line:4
-banned_users ={"Banned":{"reason":"Test Reason","unban_date":"10-12-24 10:00","moderator_note":"Test Mod note..",},"MkSeven1":{"reason":"No root Access!?!?","unban_date":"30-12-24 10:00","moderator_note":"Wrong Admin account.",},}#line:18
+banned_users ={"Banned":{"reason":"Test Reason","unban_date":"10-12-24 10:00","moderator_note":"Test Mod note..",},"MkSeven1":{"reason":"No root Access!?!?","unban_date":"30-11-24 10:00","moderator_note":"Wrong Admin account.",},}#line:18
 users ={"MkSeven1":"9872","penisbobra3":"izudoner667","Banned":"1","какой то пидор":"","root":"9872",}#line:27
 def login (O0O0000000000OO0O ,OOO0O00OO0O0O0OOO ):#line:30
     return users .get (O0O0000000000OO0O )==OOO0O00OO0O0O0OOO #line:31
