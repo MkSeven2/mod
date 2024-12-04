@@ -77,7 +77,7 @@ if st.sidebar.button("Выйти"):
 
 # Основной контент
 st.title("AI Фильтр текста")
-user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь...")
+user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь... (Только на английском языке)")
 
 api_user = "43464075"
 api_secret = "vJ2XKNu732mFPqGrEvRzX5SgyLoGdPqr"
