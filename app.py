@@ -1,7 +1,7 @@
 import streamlit as st
-from openai import OpenAI
+import openai
 import json
-openai_secret = "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"
+
 # Function to serialize the output
 def serialize(obj):
     """Recursively walk object's hierarchy."""
@@ -19,28 +19,42 @@ def serialize(obj):
     elif hasattr(obj, '__dict__'):
         return serialize(obj.__dict__)
     else:
-        return repr(obj)  # Don't know how to handle, convert to string
+        return repr(obj)  # Convert unknown types to string
 
 # Access the OpenAI API key from Streamlit secrets
-api_key = st.secrets["openai_secret"]
+api_key = st.secrets.get("openai_secret")
+if not api_key:
+    st.error("API key not found in Streamlit secrets. Please add it to proceed.")
+    st.stop()
 
-# Initialize the OpenAI client with the API key from secrets
-client = OpenAI(api_key=api_key)
+# Initialize OpenAI client
+openai.api_key = api_key
 
 # Streamlit UI components
-st.title('''Dr. Ernesto Lee - CAI 2300C Introduction to Natural Language Processing at Miami Dade College - Kendall Campus - Hate Speech Detection''')
+st.title("Hate Speech Detection")
+st.subheader("Detect potentially harmful or hateful content using OpenAI's Moderation API.")
+user_input = st.text_area("Enter text to analyze:", placeholder="Type your text here...")
 
-user_input = st.text_area("Enter text to moderate")
+# Button to trigger hate speech detection
+if st.button("Detect Hate"):
+    if not user_input.strip():
+        st.warning("Please enter some text to analyze.")
+    else:
+        try:
+            # API call to OpenAI Moderation endpoint
+            response = openai.Moderation.create(
+                model="text-moderation-latest",
+                input=user_input
+            )
 
-if st.button('Detect Hate'):
-response = client.moderations.create(
-    model="omni-moderation-latest",
-    input=user_input)
+            # Extract and serialize the response
+            output = response['results'][0]
+            serialized_output = serialize(output)
+            json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
+            
+            # Display the results
+            st.subheader("Detection Results")
+            st.json(json_output)
 
-    output = response.results[0]
-    serialized_output = serialize(output)
-    json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
-    st.json(json_output)
-
-
-
+        except Exception as e:
+            st.error(f"An error occurred while processing the request: {str(e)}")
