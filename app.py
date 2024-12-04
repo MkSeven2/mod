@@ -45,7 +45,7 @@ def get_cookie(key):
 
 # Проверка состояния авторизации
 if 'logged_in' not in st.session_state:
-    st.session_state['logged_in'] = get_cookie("logged_in") == "true"
+    st.session_state['logged_in'] = False
 
 # Авторизация
 if not st.session_state['logged_in']:
