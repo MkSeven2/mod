@@ -73,7 +73,7 @@ if not st.session_state['logged_in']:
                 set_cookie("logged_in", "true")
                 set_cookie("username", username)
                 st.success("Вы успешно вошли в систему!")
-                st.experimental_rerun()  # Перезагрузка сессии
+                st.rerun()  # Перезагрузка сессии
         else:
             st.error("Неверный логин или пароль.")
     st.stop()
@@ -85,7 +85,7 @@ if st.sidebar.button("Выйти"):
     set_cookie("logged_in", "false")
     set_cookie("username", "")
     st.experimental_set_query_params()  # Сброс параметров
-    st.experimental_rerun()
+    st.rerun()  # Перезагрузка сессии
 
 # Основной контент
 st.title("AI Фильтр текста")
