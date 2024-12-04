@@ -62,7 +62,7 @@ if not st.session_state['logged_in']:
                 st.session_state['logged_in'] = True
                 set_cookie("logged_in", "true")
                 st.success("Вы успешно вошли в систему!")
-                st.experimental_rerun()  # Перезагружаем страницу после успешного входа
+                st.rerun()  # Перезагружаем страницу после успешного входа
         else:
             st.error("Неверный логин или пароль.")
     st.stop()
@@ -72,7 +72,7 @@ st.sidebar.title("Панель управления")
 if st.sidebar.button("Выйти"):
     st.session_state['logged_in'] = False
     set_cookie("logged_in", "false")
-    st.experimental_rerun()  # Перезагружаем страницу после выхода
+    st.rerun()  # Перезагружаем страницу после выхода
     st.stop()
 
 # Основной контент
