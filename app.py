@@ -2,9 +2,9 @@ import streamlit as st
 import openai
 import json
 
-# Function to serialize the output
+# Функция для сериализации вывода
 def serialize(obj):
-    """Recursively walk object's hierarchy."""
+    """Рекурсивно обходит объект."""
     if isinstance(obj, (bool, int, float, str)):
         return obj
     elif isinstance(obj, dict):
@@ -19,39 +19,39 @@ def serialize(obj):
     elif hasattr(obj, '__dict__'):
         return serialize(obj.__dict__)
     else:
-        return repr(obj)  # Convert unknown types to string
+        return repr(obj)  # Преобразует неизвестные типы в строку
 
-# Access the OpenAI API key from Streamlit secrets
+# Доступ к ключу API OpenAI из Streamlit secrets
 api_key = st.secrets.get("openai_secret")
 if not api_key:
-    st.error("API key not found in Streamlit secrets. Please add it to proceed.")
+    st.error("Ключ API не найден в Streamlit secrets. Добавьте его для продолжения.")
     st.stop()
 
-# Initialize OpenAI client
-openai.api_key = api_key
+# Инициализация клиента OpenAI
+client = openai.Client(api_key=api_key)
 
-# Streamlit UI components
-st.title("Hate Speech Detection")
-st.subheader("Detect potentially harmful or hateful content using OpenAI's Moderation API.")
-user_input = st.text_area("Enter text to analyze:", placeholder="Type your text here...")
+# Компоненты интерфейса Streamlit
+st.title("Обнаружение языка ненависти")
+st.subheader("Анализируйте текст с помощью API модерации OpenAI.")
+user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь...")
 
-# Button to trigger hate speech detection
-if st.button("Detect Hate"):
+# Кнопка для запуска анализа
+if st.button("Анализировать текст"):
     if not user_input.strip():
-        st.warning("Please enter some text to analyze.")
+        st.warning("Введите текст для анализа.")
     else:
         try:
-            # API call to OpenAI Moderation endpoint
-            response = openai.Moderation.create(input=user_input)
+            # Вызов метода модерации
+            response = client.moderations.create(input=user_input)
 
-            # Extract and serialize the response
+            # Извлечение и сериализация ответа
             output = response['results'][0]
             serialized_output = serialize(output)
             json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
             
-            # Display the results
-            st.subheader("Detection Results")
+            # Отображение результатов
+            st.subheader("Результаты анализа")
             st.json(json_output)
 
         except Exception as e:
-            st.error(f"An error occurred while processing the request: {str(e)}")
+            st.error(f"Произошла ошибка при обработке запроса: {str(e)}")
