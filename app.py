@@ -61,13 +61,11 @@ if not st.session_state['logged_in']:
         if login(username, password):
             ban_info = check_ban(username)
             if ban_info:
-                # Если пользователь забанен, перенаправляем на страницу "not-approved"
-                st.markdown(
-                    f"""
-                    <meta http-equiv="refresh" content="0; url=https://yourwebsite.com/not-approved?reason={ban_info['reason']}&unban_date={ban_info['unban_date']}" />
-                    """, unsafe_allow_html=True
+                # Если пользователь забанен, перенаправляем на страницу с параметром not-approved
+                st.experimental_set_query_params(
+                    not_approved=True, reason=ban_info['reason'], unban_date=ban_info['unban_date']
                 )
-                st.stop()
+                st.stop()  # Останавливаем дальнейшее выполнение, чтобы обновить страницу с новыми параметрами
             else:
                 st.session_state['logged_in'] = True
                 st.session_state['username'] = username
