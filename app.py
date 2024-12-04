@@ -30,7 +30,7 @@ if not api_user or not api_secret:
 
 # Компоненты интерфейса Streamlit
 st.title("AI Фильтр текста")
-st.subheader("Анализируйте текст с помощью API | By MkSven1.")
+st.subheader("Анализируйте текст с помощью API | By MkSeven1.")
 user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь... (Только русский язык)")
 
 # Кнопка для запуска анализа
