@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import requests
+import base64
 
 # Пользователи и пароли
 users = {
@@ -8,13 +9,30 @@ users = {
     # Добавьте больше пользователей здесь, если нужно
 }
 
+# Функция для логина
+def login(username, password):
+    return users.get(username) == password
+
+# Функция для чтения cookies
+def get_cookie(key):
+    cookie_value = st.experimental_get_query_params().get(key, [None])[0]
+    return cookie_value
+
+# Функция для записи cookies
+def set_cookie(key, value):
+    value_b64 = base64.b64encode(value.encode()).decode()
+    st.experimental_set_query_params(**{key: value_b64})
+
 # Сохранение сессии с помощью Streamlit Session State и cookies
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
-# Функция для логина
-def login(username, password):
-    return users.get(username) == password
+# Чтение cookie
+cookie_logged_in = get_cookie("logged_in")
+
+# Если cookie существует и равно "true", то считаем пользователя авторизованным
+if cookie_logged_in == "true":
+    st.session_state['logged_in'] = True
 
 # Проверка сессии и логина
 if not st.session_state['logged_in']:
@@ -29,8 +47,8 @@ if not st.session_state['logged_in']:
     if login_btn:
         if login(username, password):
             st.session_state['logged_in'] = True
+            set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
             st.success("Вы успешно вошли в систему!")
-            st.experimental_set_query_params(logged_in="true")  # Сохранение состояния
         else:
             st.error("Неверный логин или пароль.")
     st.stop()  # Останавливаем выполнение, пока не произошел вход
@@ -38,7 +56,8 @@ if not st.session_state['logged_in']:
 # Логика после успешного входа
 st.sidebar.title("Панель управления")
 if st.sidebar.button("Выйти"):
-    st.session_state.clear()  # Очистка сессии
+    st.session_state['logged_in'] = False
+    set_cookie("logged_in", "false")  # Убираем cookie
     st.experimental_set_query_params()  # Очистка параметров
     st.stop()  # Остановка выполнения скрипта после выхода
 
