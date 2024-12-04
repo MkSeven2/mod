@@ -43,10 +43,10 @@ if st.button("Анализировать текст"):
         try:
             # Вызов метода модерации
             response = client.moderations.create(
-            model="text-moderation-stable",
+            model="text-moderation-007",
             input=user_input,
             )
-
+            print(response)
             # Извлечение и сериализация ответа
             output = response['results'][0]
             serialized_output = serialize(output)
