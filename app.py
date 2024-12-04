@@ -1,37 +1,61 @@
 import streamlit as st
 import json
 import requests
+import streamlit_authenticator as stauth
 
-# Функция для сериализации вывода
-def serialize(obj):
-    """Рекурсивно обходит объект."""
-    if isinstance(obj, (bool, int, float, str)):
-        return obj
-    elif isinstance(obj, dict):
-        obj = obj.copy()
-        for key in obj:
-            obj[key] = serialize(obj[key])
-        return obj
-    elif isinstance(obj, list):
-        return [serialize(item) for item in obj]
-    elif isinstance(obj, tuple):
-        return tuple(serialize(item) for item in obj)
-    elif hasattr(obj, '__dict__'):
-        return serialize(obj.__dict__)
-    else:
-        return repr(obj)  # Преобразует неизвестные типы в строку
+# Пользователи и пароли
+users = {
+    "MkSeven1": "9872",
+    # Добавьте больше пользователей здесь, если нужно
+}
+
+# Сохранение сессии с помощью Streamlit Session State и cookies
+if 'logged_in' not in st.session_state:
+    st.session_state['logged_in'] = False
+
+# Функция для логина
+def login(username, password):
+    return users.get(username) == password
+
+# Проверка сессии и логина
+if not st.session_state['logged_in']:
+    st.title("Авторизация")
+    st.subheader("Введите логин и пароль, чтобы продолжить.")
+    
+    # Форма авторизации
+    username = st.text_input("Логин", placeholder="Введите ваш логин")
+    password = st.text_input("Пароль", placeholder="Введите ваш пароль", type="password")
+    login_btn = st.button("Войти")
+    
+    if login_btn:
+        if login(username, password):
+            st.session_state['logged_in'] = True
+            st.success("Вы успешно вошли в систему!")
+            st.experimental_set_query_params(logged_in="true")  # Сохранение состояния
+        else:
+            st.error("Неверный логин или пароль.")
+    st.stop()
+
+# Логика после успешного входа
+st.sidebar.title("Панель управления")
+if st.sidebar.button("Выйти"):
+    st.session_state['logged_in'] = False
+    st.experimental_set_query_params()  # Очистка параметров
+    st.experimental_rerun()
+
+st.title("AI Фильтр текста")
+st.subheader("Анализируйте текст с помощью искуственного интеллекта. | By MkSeven1.")
+
+# Поле для ввода текста
+user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь... (Только английский язык)")
 
 # Доступ к пользовательским данным API
 api_user = "43464075"
 api_secret = "vJ2XKNu732mFPqGrEvRzX5SgyLoGdPqr"
-if not api_user or not api_secret:
-    st.error("Данные пользователя API не найдены в Streamlit secrets. Добавьте их для продолжения.")
-    st.stop()
 
-# Компоненты интерфейса Streamlit
-st.title("AI Фильтр текста")
-st.subheader("Анализируйте текст с помощью искуственного интелекта. | By MkSeven1.")
-user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь... (Только английский язык)")
+if not api_user or not api_secret:
+    st.error("Данные пользователя API не найдены. Добавьте их для продолжения.")
+    st.stop()
 
 # Кнопка для запуска анализа
 if st.button("Анализировать текст"):
@@ -55,8 +79,6 @@ if st.button("Анализировать текст"):
             # Проверка ответа
             if response.status_code == 200:
                 output = response.json()
-                serialized_output = serialize(output)
-                
                 # Анализ классов модерации
                 moderation_classes = output.get("moderation_classes", {})
                 flagged_classes = [
@@ -71,11 +93,8 @@ if st.button("Анализировать текст"):
                     st.success("Все в порядке. Текст не содержит проблемного контента.")
                 
                 # Отображение полных результатов
-                json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
-                st.subheader("Полные результаты анализа")
-                st.json(json_output)
+                st.json(output)
             else:
                 st.error(f"Ошибка API: {response.status_code} - {response.text}")
-
         except Exception as e:
             st.error(f"Произошла ошибка при обработке запроса: {str(e)}")
