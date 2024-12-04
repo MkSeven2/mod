@@ -44,7 +44,7 @@ if st.button("Анализировать текст"):
                 'text': user_input,
                 'mode': 'ml',
                 'lang': 'en',  # Измените на нужный язык, если требуется
-                'models': 'general,self-harm,toxic',
+                'models': 'general,self-harm',
                 'api_user': api_user,
                 'api_secret': api_secret
             }
