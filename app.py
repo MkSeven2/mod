@@ -26,11 +26,12 @@ users = {
 def login(username, password):
     return users.get(username) == password
 
-# Функция для чтения cookies через query_params
+# Функция для чтения cookies
 def get_cookie(key):
-    query_params = st.experimental_get_query_params()  # Читаем параметры URL
-    cookie_value = query_params.get(key, [None])[0]
+    # Используем st.query_params вместо устаревшего st.experimental_get_query_params
+    cookie_value = st.query_params.get(key, [None])[0]
     return cookie_value
+
 
 # Функция для записи cookies через query_params
 def set_cookie(key, value):
