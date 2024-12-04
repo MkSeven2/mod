@@ -1,7 +1,6 @@
 import streamlit as st
 import json
 import requests
-import streamlit_authenticator as stauth
 
 # Пользователи и пароли
 users = {
