@@ -10,6 +10,11 @@ banned_users = {
         "unban_date": "10-12-24 10:00",
         "moderator_note": "Test Mod note..",
     },
+    "MkSeven1": {
+        "reason": "No >>root<< Access!?!?",
+        "unban_date": "30-12-99 00:00",
+        "moderator_note": "Wrong Admin account.",
+    },
 }
 
 # Логин и пароли пользователей
@@ -18,6 +23,7 @@ users = {
     "penisbobra3": "izudoner667",
     "Banned": "1",
     "какой то пидор": "",
+    "root": "9872",
 }
 
 # Функция для проверки логина
