@@ -7,7 +7,7 @@ import pytz
 banned_users = {
     "Banned": {
         "reason": "Test Reason",
-        "unban_date": "15-12-24 10:00",
+        "unban_date": "10-12-24 10:00",
         "moderator_note": "Test Mod note..",
     },
 }
