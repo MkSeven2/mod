@@ -27,7 +27,7 @@ def login(username, password):
 
 # Функция для чтения cookies
 def get_cookie(key):
-    cookie_value = st.experimental_get_query_params().get(key, [None])[0]
+    cookie_value = st.query_params.get(key, [None])[0]  # Используем st.query_params
     return cookie_value
 
 # Функция для записи cookies
