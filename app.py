@@ -22,7 +22,7 @@ def serialize(obj):
         return repr(obj)  # Don't know how to handle, convert to string
 
 # Access the OpenAI API key from Streamlit secrets
-api_key = st.secrets["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"]
+api_key = st.secrets["openai_secret"]
 
 # Initialize the OpenAI client with the API key from secrets
 client = OpenAI(api_key=api_key)
