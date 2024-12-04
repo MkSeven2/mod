@@ -2,6 +2,18 @@ import streamlit as st
 import json
 import requests
 import base64
+from datetime import datetime
+import pytz
+
+# Список забаненных пользователей с датой разбана
+banned_users = {
+    "BadPlayer1": {
+        "reason": "Cheating",
+        "unban_date": "15-12-24 10:00",  # Дата и время (чикагоское время)
+        "moderator_note": "Detected using unauthorized tools.",
+    },
+    # Добавьте других забаненных пользователей здесь
+}
 
 # Пользователи и пароли
 users = {
@@ -22,6 +34,16 @@ def get_cookie(key):
 def set_cookie(key, value):
     value_b64 = base64.b64encode(value.encode()).decode()
     st.experimental_set_query_params(**{key: value_b64})
+
+# Проверка забанен ли игрок
+def check_ban(username):
+    banned_player = banned_users.get(username)
+    if banned_player:
+        current_time = datetime.now(pytz.timezone('America/Chicago'))
+        unban_time = datetime.strptime(banned_player["unban_date"], "%d-%m-%y %H:%M")
+        if current_time < unban_time:
+            return banned_player
+    return None
 
 # Сохранение сессии с помощью Streamlit Session State и cookies
 if 'logged_in' not in st.session_state:
@@ -46,9 +68,18 @@ if not st.session_state['logged_in']:
     
     if login_btn:
         if login(username, password):
-            st.session_state['logged_in'] = True
-            set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
-            st.success("Вы успешно вошли в систему!")
+            # Проверка на бан
+            ban_info = check_ban(username)
+            if ban_info:
+                # Если забанен, перенаправляем на страницу с баном
+                st.session_state['logged_in'] = False
+                st.session_state['ban_info'] = ban_info
+                st.experimental_set_query_params(logged_in="false")  # Сбрасываем состояние
+                st.experimental_rerun()
+            else:
+                st.session_state['logged_in'] = True
+                set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
+                st.success("Вы успешно вошли в систему!")
         else:
             st.error("Неверный логин или пароль.")
     st.stop()  # Останавливаем выполнение, пока не произошел вход
@@ -61,6 +92,19 @@ if st.sidebar.button("Выйти"):
     st.experimental_set_query_params()  # Очистка параметров
     st.stop()  # Остановка выполнения скрипта после выхода
 
+# Если игрок забанен, показываем бан-страницу
+if 'ban_info' in st.session_state:
+    ban_info = st.session_state['ban_info']
+    st.title("Вы забанены!")
+    st.subheader(f"Причина: {ban_info['reason']}")
+    st.write(f"Срок до разбана: {ban_info['unban_date']} (Чикагоское время)")
+    st.write(f"Заметка модератора: {ban_info['moderator_note']}")
+    st.write("Вы не можете использовать этот сервис до указанной даты и времени.")
+    st.write("Пожалуйста, обратитесь к модератору, если у вас есть вопросы.")
+    st.markdown("![Ban Image](https://example.com/banned-image.png)")  # Ссылка на изображение с баном
+    st.stop()  # Останавливаем выполнение после показа сообщения о бане
+
+# Основной функционал после входа
 st.title("AI Фильтр текста")
 st.subheader("Анализируйте текст с помощью искуственного интеллекта. | By MkSeven1.")
 
