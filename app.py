@@ -11,8 +11,8 @@ banned_users = {
         "moderator_note": "Test Mod note..",
     },
     "MkSeven1": {
-        "reason": "No >>root<< Access!?!?",
-        "unban_date": "30-12-99 00:00",
+        "reason": "No root Access!?!?",
+        "unban_date": "30-12-24 10:00",
         "moderator_note": "Wrong Admin account.",
     },
 }
