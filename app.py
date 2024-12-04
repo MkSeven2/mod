@@ -43,7 +43,7 @@ if st.button("Анализировать текст"):
         try:
             # Вызов метода модерации
             response = client.moderations.create(
-            model="omni-moderation-latest",
+            model="text-moderation-stable",
             input=user_input,
             )
 
