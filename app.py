@@ -17,7 +17,8 @@ banned_users = {
 
 # Пользователи и пароли
 users = {
-    "MkSeven1": "9872",
+    "MkSeven1": "9872", 
+    "penisbobra3": "izudoner667",
     # Добавьте больше пользователей здесь, если нужно
 }
 
@@ -25,15 +26,17 @@ users = {
 def login(username, password):
     return users.get(username) == password
 
-# Функция для чтения cookies
+# Функция для чтения cookies через query_params
 def get_cookie(key):
-    cookie_value = st.query_params.get(key, [None])[0]  # Используем st.query_params
+    query_params = st.experimental_get_query_params()  # Читаем параметры URL
+    cookie_value = query_params.get(key, [None])[0]
     return cookie_value
 
-# Функция для записи cookies
+# Функция для записи cookies через query_params
 def set_cookie(key, value):
-    value_b64 = base64.b64encode(value.encode()).decode()
-    st.experimental_set_query_params(**{key: value_b64})  # Обновление параметров
+    current_params = st.experimental_get_query_params()  # Читаем текущие параметры
+    current_params[key] = value
+    st.experimental_set_query_params(**current_params)  # Обновляем параметры
 
 # Проверка забанен ли игрок
 def check_ban(username):
@@ -41,7 +44,6 @@ def check_ban(username):
     if banned_player:
         current_time = datetime.now(pytz.timezone('America/Chicago'))
         unban_time = datetime.strptime(banned_player["unban_date"], "%d-%m-%y %H:%M")
-        unban_time = pytz.timezone('America/Chicago').localize(unban_time)  # Добавляем часовой пояс
         if current_time < unban_time:
             return banned_player
     return None
@@ -75,9 +77,8 @@ if not st.session_state['logged_in']:
                 # Если забанен, перенаправляем на страницу с баном
                 st.session_state['logged_in'] = False
                 st.session_state['ban_info'] = ban_info
-                st.experimental_set_query_params(logged_in="false")  # Сбрасываем состояние
-                st.experimental_set_query_params()  # Обновляем параметры URL
-                st.stop()  # Остановка после бан-страницы
+                set_cookie("logged_in", "false")  # Сбрасываем состояние
+                st.experimental_rerun()
             else:
                 st.session_state['logged_in'] = True
                 set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
