@@ -7,7 +7,7 @@ import pytz
 
 # Список забаненных пользователей с датой разбана
 banned_users = {
-    "BadPlayer1": {
+    "MkSeven1": {
         "reason": "Cheating",
         "unban_date": "15-12-24 10:00",  # Дата и время (чикагоское время)
         "moderator_note": "Detected using unauthorized tools.",
