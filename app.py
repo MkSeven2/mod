@@ -42,16 +42,10 @@ if st.button("Detect Hate"):
     else:
         try:
             # API call to OpenAI Moderation endpoint
-            response = openai.ChatCompletion.create(
-                model="text-moderation-latest",
-                messages=[
-                    {"role": "system", "content": "You are a content moderation assistant."},
-                    {"role": "user", "content": user_input},
-                ],
-            )
+            response = openai.Moderation.create(input=user_input)
 
             # Extract and serialize the response
-            output = response['choices'][0]['message']['content']
+            output = response['results'][0]
             serialized_output = serialize(output)
             json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
             
