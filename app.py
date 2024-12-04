@@ -33,7 +33,7 @@ def get_cookie(key):
 # Функция для записи cookies
 def set_cookie(key, value):
     value_b64 = base64.b64encode(value.encode()).decode()
-    st.experimental_set_query_params(**{key: value_b64})
+    st.experimental_set_query_params(**{key: value_b64})  # Обновление параметров
 
 # Проверка забанен ли игрок
 def check_ban(username):
@@ -77,6 +77,7 @@ if not st.session_state['logged_in']:
                 st.session_state['ban_info'] = ban_info
                 st.experimental_set_query_params(logged_in="false")  # Сбрасываем состояние
                 st.experimental_set_query_params()  # Обновляем параметры URL
+                st.stop()  # Остановка после бан-страницы
             else:
                 st.session_state['logged_in'] = True
                 set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
