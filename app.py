@@ -33,9 +33,10 @@ st.title('''Dr. Ernesto Lee - CAI 2300C Introduction to Natural Language Process
 user_input = st.text_area("Enter text to moderate")
 
 if st.button('Detect Hate'):
-    response = client.moderations.create(
-    model = "omni-moderation-latest",
-    input=user_input)
+response = client.moderations.create(
+    model="omni-moderation-latest",
+    input=user_input,
+)
 
     output = response.results[0]
     serialized_output = serialize(output)
