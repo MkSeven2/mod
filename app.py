@@ -29,9 +29,9 @@ if not api_user or not api_secret:
     st.stop()
 
 # Компоненты интерфейса Streamlit
-st.title("Обнаружение языка ненависти")
-st.subheader("Анализируйте текст с помощью API Sightengine.")
-user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь...")
+st.title("AI Фильтр текста")
+st.subheader("Анализируйте текст с помощью API | By MkSven1.")
+user_input = st.text_area("Введите текст для анализа:", placeholder="Введите текст здесь... (Только русский язык)")
 
 # Кнопка для запуска анализа
 if st.button("Анализировать текст"):
