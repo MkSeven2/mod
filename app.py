@@ -39,14 +39,9 @@ def set_cookie(key, value):
 def check_ban(username):
     banned_player = banned_users.get(username)
     if banned_player:
-        # Текущее время с учетом часового пояса Чикаго
         current_time = datetime.now(pytz.timezone('America/Chicago'))
-        
-        # Преобразуем строку с датой разбана в datetime с учетом часового пояса
         unban_time = datetime.strptime(banned_player["unban_date"], "%d-%m-%y %H:%M")
         unban_time = pytz.timezone('America/Chicago').localize(unban_time)  # Добавляем часовой пояс
-
-        # Сравнение с учетом часового пояса
         if current_time < unban_time:
             return banned_player
     return None
@@ -81,7 +76,7 @@ if not st.session_state['logged_in']:
                 st.session_state['logged_in'] = False
                 st.session_state['ban_info'] = ban_info
                 st.experimental_set_query_params(logged_in="false")  # Сбрасываем состояние
-                st.experimental_rerun()
+                st.experimental_set_query_params()  # Обновляем параметры URL
             else:
                 st.session_state['logged_in'] = True
                 set_cookie("logged_in", "true")  # Устанавливаем cookie на "true"
