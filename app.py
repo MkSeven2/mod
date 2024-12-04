@@ -56,10 +56,17 @@ if st.button("Анализировать текст"):
             if response.status_code == 200:
                 output = response.json()
                 serialized_output = serialize(output)
+                
+                # Логика обработки результатов
+                if output.get("probabilities", {}).get("self-harm", 0) > 0.5 or \
+                   output.get("probabilities", {}).get("general", 0) > 0.5:
+                    st.warning("Текст отфильтрован. В тексте обнаружено что-то нежелательное.")
+                else:
+                    st.success("Все в порядке. Текст не содержит проблемного контента.")
+                
+                # Отображение полных результатов
                 json_output = json.dumps(serialized_output, indent=2, ensure_ascii=False)
-
-                # Отображение результатов
-                st.subheader("Результаты анализа")
+                st.subheader("Полные результаты анализа")
                 st.json(json_output)
             else:
                 st.error(f"Ошибка API: {response.status_code} - {response.text}")
